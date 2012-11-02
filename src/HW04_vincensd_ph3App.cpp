@@ -1,8 +1,8 @@
 /*****
- * File: hw04_vincensd_ph3App.cpp	
+ * File		: hw04_vincensd_ph3App.cpp	
  * Author   : vincensd
  * Date     : 2012-28-10
- * Purpose  :  This program will perform several duties required for HW04.
+ * Purpose  : This program will perform several duties required for HW04.
  * Sources  : 
  http://www.creativeapplications.net/tutorials/images-in-cinder-tutorials-cinder/
 
@@ -66,6 +66,10 @@ class HW04_vincensd_ph3App : public AppBasic {
 	Surface8u regularSurface; // an empty 8 bit surface
     Surface32f hdrSurface; // an empty 32 bit high dynamic range surface
 
+	vincensdCensus starObject;
+	vincensdCensus census00_Object;
+	vincensdCensus census10_Object;
+
 	//Track how many frames we have shown, for animation purposes
 	int frame_number_;
 	boost::posix_time::ptime app_start_time_;
@@ -76,6 +80,10 @@ class HW04_vincensd_ph3App : public AppBasic {
 	static const int AppHeight=600;
 	static const int TextureSize=1024; //Must be the next power of 2 bigger or equal to app dimensions
 	
+
+	// mouse - draw stuff
+	int xMouseClick;
+	int yMouseClick;
 		
 
 };
@@ -96,14 +104,16 @@ void HW04_vincensd_ph3App::setup()
 	textureMap = loadImage( "../resources/map1.jpg" );
 
 
-	// IMPORT DATA //
+	////////////////////////// IMPORT DATA ////////////////////////////////////////////////////////
 
-	// IMPORT Starbucks //
+	/////////////////////////// IMPORT Starbucks /////////////////////////////////////////////////
 	/** setup vars */
+	
+	/**
 	std::vector<Entry> entryVec;
 	string line;
 
-	/** Read .csv file into a vector */
+	/** Read .csv file into a vector /
 	//Open file
 	ifstream infile ("..\\resources\\Starbucks_2006.csv");			// pg589 create an an input stream
 	
@@ -137,10 +147,11 @@ void HW04_vincensd_ph3App::setup()
 																// http://bytes.com/topic/c/answers/849132-std-vector-c-array
 	 // copy vector into array: two approaches
 		// std::copy(entryVec.begin(), entryVec.end(), entryArr); 
-		/** or ...*/
+		//** or ...
 		for (int i = 0; i < (entryVec.size()-1); i++ ){
 			entryArr[i] = entryVec.at(i);
 		}
+		*/
 		
 		/** test output in Autos window 
 		cout << "output = " << &entryArr[0] << endl;
@@ -148,39 +159,64 @@ void HW04_vincensd_ph3App::setup()
 		cout << "output = " << &entryArr[7653] << endl;
 		cout << "output = " << &entryArr[7654] << endl;
 
+
 	// BUILD Starbucks DS 
 		// call 	
-		vincensdCensus starObject;
+		//vincensdCensus starObject;
 		starObject.build( entryArr, entrySize ); 	
 	// Delete temp Array
 		delete [] entryArr;	
+	
 	// call getNearest
 		starObject.getNearest( 0.213630099, 0.44826200 );  // flagstaff, az
 	//display returned nearest object
 		cout << "Closets neighbor is: " << starObject.closestBucks -> identifier << endl;
 
 
-////////////////////////////////////////////////////////////////////////////////
+/////////////////////// Census 200 /////////////////////////////////////////////////////////////////
 
 	// IMPORT Census 2000 //
-	// BUILD Census 2010 DS 
-	// Delete temp Array
-	
-	/**
+
+	/** do the conversion in setup
 	x = (longitude - 24)/(49-24)
  
 	y = (latitude - (-125))/((-63) - (-125))
 	*/
+	// BUILD Census 2010 DS
+		// census00_Object.buildCensus( entryArr, entrySize );
+
+	// Delete temp Array
+		//delete [] entryArr;	
+	
+
+////////////////////// Census 2010 ///////////////////////////////////////////////////////////
 
 	// IMPORT Census 2010 //
-	// BUILD Census 2010 DS 
-	// Delete temp Array
+		/** do the conversion in setup
+			x = (longitude - 24)/(49-24)
+ 
+			y = (latitude - (-125))/((-63) - (-125))
+			*/
 
+	// BUILD Census 2010 DS
+		// census00_Object.buildCensus( entryArr, entrySize );
+
+	// Delete temp Array
+		//delete [] entryArr;	
 }
 
 void HW04_vincensd_ph3App::mouseDown( MouseEvent event )
 {
-}
+//Satisfies ... at the mouse click
+uint8_t* dataArray = (*mySurface_).getData();
+
+// save coordinates and will update when Draw is called
+ xMouseClick = event.getX();
+ yMouseClick = event.getY();
+ 
+ }
+
+
 
 void HW04_vincensd_ph3App::update()
 {
@@ -193,8 +229,46 @@ void HW04_vincensd_ph3App::draw()
 
 	//Draw our texture to the screen, using graphics library
 
-	gl::draw(*mySurface_);
-	gl::draw( textureMap );
+	//gl::draw(*mySurface_);
+
+	// DRAW ORDER: 1st: so that it's always on bottom
+	gl::draw( textureMap );  
+
+
+	// DRAW ORDER: 2nd: loop thru SB points to be ontop of map
+	/** draw colors/ rectangles like I did in proj 2 */
+	//randomze color, rndColor
+		//Color8u(rand()%256,rand()%256,rand()%256), 3);
+	 //gl::color (200,200,200); 
+	 //gl::circle (.5,.5,3);
+	 //gl::drawSolidRect(Rectf (.5*800, .5*600, .6*800, .6*600) );
+
+	/**
+		int shadowOffset = 3;
+		int shake = rand()%shakeFactor_;
+		shadowOffset += shake;
+
+
+		// turn on alpha blending
+		//http://libcinder.org/docs/v0.8.2/namespacecinder_1_1gl.html#a2cb8982a5a007376031745ac074bed4c
+		gl::enableAlphaBlending();
+		//activate the alpha channel
+		gl::color(ColorA(0.0f,0.0f,0.0f,0.25f));
+		// draw a rectangle offset from the primary rect
+		//gl::drawSolidRect(Rectf (x1_+shadowOffset, y1_+shadowOffset, x2_+shadowOffset, y2_+shadowOffset), 6.0f);
+		//turn off alpha
+		gl::disableAlphaBlending();	
+		// set the color of the list rectangle
+		gl::color(inColor_);	
+		// draw list rectangle
+		gl::drawSolidRect(Rectf (x1_+ shake, y1_+ shake, x2_+shake, y2_+shake) );
+
+
+
+
+	*/
+	
+
 }
 
 CINDER_APP_BASIC( HW04_vincensd_ph3App, RendererGl )

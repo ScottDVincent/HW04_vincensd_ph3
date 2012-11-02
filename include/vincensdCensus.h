@@ -49,11 +49,13 @@ public:
 public:
 	
 	// Members vars
+	
 	// Starbucks stuff
 	Entry* entryArrBld;		// starbucks: holds our array from build to use in getNearest 
 	vector<Entry> buildVec;	// starbucks: holds our vector from build to use in getNearest
 	int arraySize;			// size of array after we remove duplicates
 	Entry* closestBucks;	// object of closeest Starbucks
+	
 	// Census stuff
 	Entry* entry_Census2000ArrBld;		// : holds our array from build to use in getNearest 
 	vector<Entry> Census2000_buildVec;	// : holds our vector from build to use in getNearest
@@ -100,6 +102,8 @@ public:
 	* @param int n
 	*/
 	void build(Entry* c, int n);
+	//and
+	void buildCensus(CensusEntry* c, int n);
 	//and
 	void buildArray(Entry* c, int n);
 	//and

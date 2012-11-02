@@ -1,14 +1,14 @@
 /*****
- * File: vincensdCensus.cpp	
+ * File		: vincensdCensus.cpp	
  * Author   : vincensd
  * Date     : 2012-10-10
  * Sources  : 
- * Purpose  : 
+ * Purpose  : Implement functionality for HW04: build, buildCensus, getNearest
  
  Some helpful ideas
  http://www.daniweb.com/software-development/cpp/threads/50051/how-to-read-data-from-csv-file-in-an-array-and-parse
  http://stackoverflow.com/questions/5265160/using-getline-to-extract-information-and-store-them-in-a-datatype-in-c?rq=1
- /http://stackoverflow.com/questions/12233596/reading-csv-data-from-a-file?rq=1
+ http://stackoverflow.com/questions/12233596/reading-csv-data-from-a-file?rq=1
  */
  
 #include "vincensdCensus.h"
@@ -104,6 +104,13 @@ using namespace std;
 	/** Return a pointer to the entry that is closest to the given coordinates. Your
 	 *  answer may be approximate, but then you will lose points on the "Accuracy" quality measure
 	 */
+
+	 void vincensdCensus::buildCensus(CensusEntry* c, int n) {
+
+
+	 } //end buildCensus
+
+
 	
 	Entry* vincensdCensus::getNearest(double x, double y) {
 		// will call search
@@ -237,7 +244,7 @@ using namespace std;
 		return r;
 	} //end insert
 
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 	/*
@@ -273,9 +280,9 @@ using namespace std;
 		
 
 
-	} // end getNearest
+	} // end getNearestNode
 	
-
+	////////////////////////////////////////////////////////////////////////////////////////////
 
 	/**
 	* Entry* search

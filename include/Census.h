@@ -1,5 +1,6 @@
 /*****
  * Author   : brinkmwj
+ * Modified	: Scott Vincent
  * Date     : 2012-10-08
  * Sources  : All code is original
  * Purpose  : This class is designed to be an "Interface." Your starbucks data structure should be
@@ -7,8 +8,8 @@
  *            create a <uniqueid>Starbucks class, in the files <uniqueid>Starbucks.h and 
  *            <uniqueid>Starbucks.cpp
  *            Declare your class (in your <uniqueid>Starbucks.h) like this:
- *  class brinkmwjStarbucks : public Starbucks {
- *    // declaration of member variables and methods here
+ *				class brinkmwjStarbucks : public Starbucks {
+ *				// declaration of member variables and methods here
  *  };
  *            In your class you should declare all of your methods to be virtual: This is how
  *            polymorphism is accomplished in C++. Do NOT copy the part that says "= 0" that I use
@@ -29,6 +30,15 @@ public:
 	double x;
 	double y;
 };
+
+
+class CensusEntry {
+public:
+	int population;
+	double x;	//latitude
+	double y;   //longitude
+};
+
 
 /*
  * This is an "abstract class" ... it contains a list of the public methods of the class, but
@@ -52,6 +62,8 @@ public:
 	 *       to be the "same location" if both |x1 - x2| <= 0.00001 and |y1 - y2| < 0.00001
 	 */
 	virtual void build(Entry* c, int n) = 0;
+
+	virtual void buildCensus(CensusEntry* c, int n) = 0;
 	
 	/*
 	 * Return a pointer to the entry that is closest to the given coordinates. Your
