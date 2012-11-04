@@ -52,42 +52,42 @@ using namespace std;
 
 
 	void vincensdCensus::build(Entry* c, int n){
-		//will call insert
+		//will call insert in BST version
 		double threshold = 0.00001;
 
-		//vector<Entry> buildVec;	
-		//storage.push_back(n);	
+		//vector<Entry> bucksVec;	
+		
 		// Convert from array back to vector to remove duplicates and randomize
 		for(int i = 0; i <= (n-1); i++)	{	
-			buildVec.push_back(c[i]);		
+			bucksVec.push_back(c[i]);		
 		}	
 		
 		// Check for duplicate locations.  (can use .dot operator to check points
-		for(int i = 0; i < buildVec.size(); i++) {	
-			for(int j = i + 1; j < buildVec.size(); j++) {		
-				if(abs(buildVec[i].x - buildVec[j].x) <= threshold)		//and
-					if(abs(buildVec[i].y - buildVec[j].y) <= threshold)	
+		for(int i = 0; i < bucksVec.size(); i++) {	
+			for(int j = i + 1; j < bucksVec.size(); j++) {		
+				if(abs(bucksVec[i].x - bucksVec[j].x) <= threshold)		//and
+					if(abs(bucksVec[i].y - bucksVec[j].y) <= threshold)	
 					 // how to erase a single element from aa vector 
                      //http://stackoverflow.com/questions/875103/how-to-erase-element-from-stdvector-by-index			
-						buildVec.erase(buildVec.begin() + i);	
+						bucksVec.erase(bucksVec.begin() + i);	
 			}
 		}
 		
-		// console()  << cout << "output = " << buildVec.size() << endl;
+		// console()  << cout << "output = " << bucksVec.size() << endl;
 		
 		// have to update arraySize to new size of  vector
-		arraySize =  buildVec.size();  
+		starbucksSize =  bucksVec.size();  
 
-		// Shuffles vector to make it random	
-		std::random_shuffle(buildVec.begin(), buildVec.end());	
+		// Shuffles vector to make it random, for use in BST
+		//std::random_shuffle(bucksVec.begin(), bucksVec.end());	
 		
 
 		/** turn into array and use in getNearest in tree format
 
 		entryArrBld = new Entry[arraySize];	
 		// Copies all values from the vector to the array	
-		for(int i = 0; i < buildVec.size(); i++) {		
-			entryArrBld[i] = buildVec[i];
+		for(int i = 0; i < bucksVec.size(); i++) {		
+			entryArrBld[i] = bucksVec[i];
 		}
 		*/
 		
@@ -100,18 +100,37 @@ using namespace std;
 		*/
 
 	} // end build
+
+	////////////////////////////////////////////////////////////
 	
-	/** Return a pointer to the entry that is closest to the given coordinates. Your
-	 *  answer may be approximate, but then you will lose points on the "Accuracy" quality measure
-	 */
+	
 
 	 void vincensdCensus::buildCensus(CensusEntry* c, int n) {
+		
+		// vector<CensusEntry> censusVec;	// : holds our vector from build to use in getNearest
+	
+		// Convert from array back to vector to remove duplicates and randomize
+		for(int i = 0; i <= (n-1); i++)	{	
+			censusVec.push_back(c[i]);		
+		}	
+					
+		// have to update arraySize to new size of  vector
+		CensusSize =  censusVec.size();  
 
+		// Shuffles vector to make it random, for use in BST
+		//std::random_shuffle(bucksVec.begin(), bucksVec.end());	
+		
 
 	 } //end buildCensus
 
 
 	
+
+//////////////////////////////////////////////////////////
+	
+	/** Return a pointer to the entry that is closest to the given coordinates. Your
+	 *  answer may be approximate, but then you will lose points on the "Accuracy" quality measure
+	 */
 	Entry* vincensdCensus::getNearest(double x, double y) {
 		// will call search
 		
@@ -126,10 +145,10 @@ using namespace std;
 
 		
 		// loop thru points
-			for (int i = 0; i <= (buildVec.size()-1); i++) {
+			for (int i = 0; i <= (bucksVec.size()-1); i++) {
 				
-			double starX = buildVec[i].x;
-			double starY = buildVec[i].y;
+			double starX = bucksVec[i].x;
+			double starY = bucksVec[i].y;
 
 			// find x
 			difX = abs(qX - starX);
@@ -143,7 +162,7 @@ using namespace std;
 			if  (distanceTwo < distanceSmallest){
 					distanceSmallest = distanceTwo;
 					//  equate the Entry w/ the smallest (x,y) coords
-					closestBucks = &buildVec[i]; // make Entry* = to the '&' address of entryArrBld
+					closestBucks = &bucksVec[i]; // make Entry* = to the '&' address of entryArrBld
 					} 
 		  } // end for
 
@@ -163,7 +182,7 @@ using namespace std;
 
 		root = NULL;
 		r = NULL;
-		arraySize = n;
+		starbucksSize = n;
 		bool isXLevel = true;
 		int levelCounter = 0;
 		
@@ -177,7 +196,7 @@ using namespace std;
 		root = insert(c, root, isXLevel);
 
 		// loop through array 'c', start at i=1 because we used '0' for root
-		for (int i = 1; i <= (arraySize-1); i++ ){ 
+		for (int i = 1; i <= (starbucksSize-1); i++ ){ 
 			// check level; even = true, odd = false
 			//if (i % 2 == 0) // (levelCounter % 2 == 0)
 				//isXLevel = true;
@@ -261,7 +280,7 @@ using namespace std;
 		bool isXLevel;
 	 
 		// loop thru points
-		for (int i = 0; i <= arraySize; i++) {
+		for (int i = 0; i <= starbucksSize; i++) {
 			// check level; even = true, odd = false
 			//if (i % 2 == 0) // (levelCounter % 2 == 0)
 				//isXLevel = true;

@@ -100,8 +100,8 @@ void HW04_vincensd_ph3App::setup()
 	// LOAD IMAGE
 	//This is the setup that everyone needs to do
 	//mySurface_ = new Surface(TextureSize,TextureSize,false);
-	 mySurface_ = new Surface( TextureSize, TextureSize, true, SurfaceChannelOrder::RGBA ); // width, height, alpha?, channel order
-	textureMap = loadImage( "../resources/map1.jpg" );
+	mySurface_ = new Surface( TextureSize, TextureSize, true, SurfaceChannelOrder::RGBA ); // width, height, alpha?, channel order
+	textureMap = loadImage( "../resources/map1_1024.jpg" );
 
 
 	////////////////////////// IMPORT DATA ////////////////////////////////////////////////////////
@@ -109,11 +109,12 @@ void HW04_vincensd_ph3App::setup()
 	/////////////////////////// IMPORT Starbucks /////////////////////////////////////////////////
 	/** setup vars */
 	
-	/**
+	
+
 	std::vector<Entry> entryVec;
 	string line;
 
-	/** Read .csv file into a vector /
+	//** Read .csv file into a vector /
 	//Open file
 	ifstream infile ("..\\resources\\Starbucks_2006.csv");			// pg589 create an an input stream
 	
@@ -151,9 +152,9 @@ void HW04_vincensd_ph3App::setup()
 		for (int i = 0; i < (entryVec.size()-1); i++ ){
 			entryArr[i] = entryVec.at(i);
 		}
-		*/
 		
-		/** test output in Autos window 
+	
+		/** test output in Autos window */	 
 		cout << "output = " << &entryArr[0] << endl;
 		cout << "output = " << &entryArr[1] << endl;
 		cout << "output = " << &entryArr[7653] << endl;
@@ -164,7 +165,9 @@ void HW04_vincensd_ph3App::setup()
 		// call 	
 		//vincensdCensus starObject;
 		starObject.build( entryArr, entrySize ); 	
+	
 	// Delete temp Array
+		entryVec.clear();
 		delete [] entryArr;	
 	
 	// call getNearest
@@ -172,43 +175,158 @@ void HW04_vincensd_ph3App::setup()
 	//display returned nearest object
 		cout << "Closets neighbor is: " << starObject.closestBucks -> identifier << endl;
 
-
+		
 /////////////////////// Census 200 /////////////////////////////////////////////////////////////////
 
 	// IMPORT Census 2000 //
+	std::vector<CensusEntry> censusVec;
+	double latitude, longitude;
+	string num, population;
 
-	/** do the conversion in setup
-	x = (longitude - 24)/(49-24)
- 
-	y = (latitude - (-125))/((-63) - (-125))
-	*/
+	/** Read .csv file into a vector */
+	//Open file
+	ifstream infile2 ("..\\resources\\Census_2000.csv");			    // pg589 create an an input stream
+	
+	if (infile2.fail()){ 
+		cout << "Error opening file" << endl;						// %s\n", "Starbucks_2006.csv"); 
+	}
+
+	//Fill the vector with entry data
+	  do { //while ( !infile.eof() )
+		     
+		CensusEntry e;		// for each iteration create a new entry variable to hold the input values, don't need a constructed object
+		//Entry* e = new Entry();		// Mikes code: would cause a memory leak as we are not destroying the object at end 
+		
+				// take care of first 6 columns
+				for (int i =0; i <=3; i++){
+					getline(infile2, num, ',');
+					//infile2.get();		// gets a single char
+				}
+
+				infile2 >> e.population;	// put the population directly into the object
+				// getline(infile, population, ',');
+				//e.population = population;
+
+				 infile2.get();					// gets a single char, the comma
+				 infile2 >> latitude;
+				 e.y = (latitude - (-125))/((-63) - (-125)); //convert to the proper y coordinate
+
+				 infile2.get();					 // gets a single char,  the comma
+				 infile2 >> longitude;
+				 e.x = (longitude - 24)/(49-24); //convert to the proper x coordinate
+
+
+				 censusVec.push_back(e);	// add objects onto back of vector
+	}
+		while ( !infile2.eof() );
+
+	// transform Vector into array
+		 const int Census2000Size = censusVec.size();					// size of new array
+		 CensusEntry *entryArr2 = new CensusEntry [ censusVec.size() ];		// have to create a dynamic array of type Entry
+																// http://bytes.com/topic/c/answers/849132-std-vector-c-array
+	 // copy vector into array: two approaches
+		 std::copy(censusVec.begin(), censusVec.end(), entryArr2); 
+		/** or ...
+		for (int i = 0; i < (entryVec.size()-1); i++ ){
+			entryArr2[i] = censusVec.at(i);
+		}*/
+		
+		
+		/** test output in Autos window  */
+		cout << "output = " << &entryArr2[0] << endl;
+		cout << "output = " << &entryArr2[1] << endl;
+		cout << "output = " << &entryArr2[7653] << endl;
+		cout << "output = " << &entryArr2[7654] << endl;
+
 	// BUILD Census 2010 DS
-		// census00_Object.buildCensus( entryArr, entrySize );
+		census00_Object.buildCensus( entryArr2, Census2000Size );
 
-	// Delete temp Array
-		//delete [] entryArr;	
+
+	// Delete temp Arrays
+		censusVec.clear();
+		delete [] entryArr2;	
+	
 	
 
 ////////////////////// Census 2010 ///////////////////////////////////////////////////////////
 
-	// IMPORT Census 2010 //
-		/** do the conversion in setup
-			x = (longitude - 24)/(49-24)
- 
-			y = (latitude - (-125))/((-63) - (-125))
-			*/
+	// IMPORT Census 2100 //
+	std::vector<CensusEntry> censusVec2;
+	double latitude2, longitude2;
+	string num2, population2;
+
+	/** Read .csv file into a vector */
+	//Open file
+	ifstream infile3 ("..\\resources\\Census_2010.csv");			    // pg589 create an an input stream
+	
+	if (infile3.fail()){ 
+		cout << "Error opening file" << endl;						// %s\n", "Starbucks_2006.csv"); 
+	}
+
+	//Fill the vector with entry data
+	  do { //while ( !infile.eof() )
+		     
+		CensusEntry f;		// for each iteration create a new entry variable to hold the input values, don't need a constructed object
+		//Entry* e = new Entry();		// Mikes code: would cause a memory leak as we are not destroying the object at end 
+		
+				// take care of first 6 columns
+				for (int i =0; i <=3; i++){
+					getline(infile3, num2, ',');
+					//infile2.get();		// gets a single char
+				}
+
+				infile3 >> f.population;	// put the population directly into the object
+				// getline(infile, population, ',');
+				//e.population = population;
+
+				 infile3.get();					// gets a single char, the comma
+				 infile3 >> latitude2;
+				 f.y = (latitude2 - (-125))/((-63) - (-125)); //convert to the proper y coordinate
+				
+				 infile3.get();					 // gets a single char,  the comma
+				 infile3 >> longitude2;
+				 f.x = (longitude2 - 24)/(49-24); //convert to the proper x coordinate
+			
+				 censusVec2.push_back(f);	// add objects onto back of vector
+	}
+		while ( !infile3.eof() );
+
+	// transform Vector into array
+		 const int Census2010Size = censusVec2.size();					// size of new array 
+		 CensusEntry *entryArr3 = new CensusEntry [ censusVec2.size() ];		// have to create a dynamic array of type Entry
+																// http://bytes.com/topic/c/answers/849132-std-vector-c-array
+	 // copy vector into array: two approaches
+		 std::copy(censusVec2.begin(), censusVec2.end(), entryArr3); 
+		/** or ...
+		for (int i = 0; i < (entryVec.size()-1); i++ ){
+			entryArr2[i] = censusVec.at(i);
+		}*/
+		
+		
+		/** test output in Autos window  */
+		cout << "output = " << &entryArr3[0] << endl;
+		cout << "output = " << &entryArr3[1] << endl;
+		cout << "output = " << &entryArr3[7653] << endl;
+		cout << "output = " << &entryArr3[7654] << endl;
 
 	// BUILD Census 2010 DS
-		// census00_Object.buildCensus( entryArr, entrySize );
+		census10_Object.buildCensus( entryArr3, Census2010Size );
 
-	// Delete temp Array
-		//delete [] entryArr;	
+
+	// Delete temp Arrays
+		censusVec2.clear();
+		delete [] entryArr3;	
+
+	
 }
+
+
+
 
 void HW04_vincensd_ph3App::mouseDown( MouseEvent event )
 {
 //Satisfies ... at the mouse click
-uint8_t* dataArray = (*mySurface_).getData();
+//uint8_t* dataArray = (*mySurface_).getData();
 
 // save coordinates and will update when Draw is called
  xMouseClick = event.getX();
@@ -240,8 +358,24 @@ void HW04_vincensd_ph3App::draw()
 	//randomze color, rndColor
 		//Color8u(rand()%256,rand()%256,rand()%256), 3);
 	 //gl::color (200,200,200); 
-	 //gl::circle (.5,.5,3);
-	 //gl::drawSolidRect(Rectf (.5*800, .5*600, .6*800, .6*600) );
+	// glColor3f (1.0, 0.0, 0.0);
+
+	 /** loop thru and draw starObject points */
+
+	 for(int i = 0; i <=5 ; i++){ //starObject.starbucksSize
+		glColor3f (1.0, 1.0, 0.0);
+
+		//http://libcinder.org/docs/dev/namespacecinder_1_1gl.html#a225b1296ceeaa8b2393339fc39debf7a
+	
+		gl::drawSolidCircle( Vec2f( ((starObject.bucksVec.at(i).x)*800), ( (1 - starObject.bucksVec.at(i).y)*600) ), 2.0f );
+		 // for census stuff
+	//	 gl::drawSolidCircle( Vec2f( ((census10_Object.censusVec.at(i).x)*200), ( (1- census10_Object.censusVec.at(i).y)*150) ), 2.0f );
+	 }
+
+	 gl::drawSolidCircle( Vec2f( 15.0f, 25.0f ), 50.0f );
+
+	 //gl::drawSolidCircle( Vec2f( 15.0f, 25.0f ), 50.0f, 7 ); 
+	// gl::drawSolidRect(Rectf (.5*800, .5*600, .6*800, .6*600) );
 
 	/**
 		int shadowOffset = 3;

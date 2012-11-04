@@ -51,19 +51,22 @@ public:
 	// Members vars
 	
 	// Starbucks stuff
-	Entry* entryArrBld;		// starbucks: holds our array from build to use in getNearest 
-	vector<Entry> buildVec;	// starbucks: holds our vector from build to use in getNearest
-	int arraySize;			// size of array after we remove duplicates
+	//Entry* entryArrBld;	// starbucks: holds our array from build to use in getNearest 
+	vector<Entry> bucksVec;	// starbucks: holds our vector from build to use in getNearest
+	int starbucksSize;		// size of array after we remove duplicates
 	Entry* closestBucks;	// object of closeest Starbucks
 	
 	// Census stuff
-	Entry* entry_Census2000ArrBld;		// : holds our array from build to use in getNearest 
-	vector<Entry> Census2000_buildVec;	// : holds our vector from build to use in getNearest
-	int Census2000Size;					// size of array
-	
-	Entry* entry_Census2010ArrBld;		// : holds our array from build to use in getNearest 
-	vector<Entry> Census2010_buildVec;	// : holds our vector from build to use in getNearest
-	int Census2010Size;					// size of array 
+	//CensusEntry* entry_Census2000ArrBld;		// : holds our array from build to use in getNearest 
+	vector<CensusEntry> censusVec;		// : holds our vector from build to use in getNearest
+	int CensusSize;							  // size of array
+
+	//int Census2010Size;
+	//int Census2000Size;
+
+	//CensusEntry* entry_Census2010ArrBld;		// : holds our array from build to use in getNearest 
+	//vector<CensusEntry> Census2010_bucksVec;	// : holds our vector from build to use in getNearest
+	//int Census2010Size;							// size of array 
 	
 	// Tree stuff
 	Node* newNode;			// new node in tree
