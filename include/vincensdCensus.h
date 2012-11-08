@@ -67,6 +67,9 @@ public:
 	vector<CensusEntry> censusVec;				// : holds our vector from build to use in getNearest
 	int CensusSize;							   // size of array
 
+	int xMult;
+	int yMult;
+
 	//int Census2010Size;
 	//int Census2000Size;
 

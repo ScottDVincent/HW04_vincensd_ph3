@@ -1,6 +1,6 @@
 /*****
  * File		: hw04_vincensd_ph3App.cpp	
- * Author   : vincensd
+ * Author   : Scott Vincent
  * Date     : 2012-28-10
  * Purpose  : This program will perform several duties required for HW04.
  * Sources  : 
@@ -9,7 +9,12 @@
 
 
 
- * Fulfills : (a) Draw map of the US
+ * Fulfills : 
+ (a) Draw map of the US [20];
+ (b) Highlight Nearest Starbucks to mouse click [10],
+ (g) Video [10];
+ (e) Draw change from 2000 to 2010; areas within .001, +pop:green, -pop:red [30],
+
 
  * @note This file is (c) 2012. It is licensed under the 
  * CC BY 3.0 license (http://creativecommons.org/licenses/by/3.0/),
@@ -87,6 +92,7 @@ class HW04_vincensd_ph3App : public AppBasic {
 	int xMouseClick;
 	int yMouseClick;
 		
+	double xMult, yMult;
 
 };
 
@@ -105,6 +111,8 @@ void HW04_vincensd_ph3App::setup()
 	mySurface_ = new Surface( TextureSize, TextureSize, true, SurfaceChannelOrder::RGBA ); // width, height, alpha?, channel order
 	textureMap = loadImage( "../resources/map1_1024.jpg" );
 
+	xMult = 800.0;
+	yMult = 600.0;
 
 	////////////////////////// IMPORT DATA ////////////////////////////////////////////////////////
 
@@ -348,12 +356,30 @@ void HW04_vincensd_ph3App::mouseDown( MouseEvent event )
 	// save coordinates and will update when Draw is called
 	 xMouseClick = event.getX();
 	 yMouseClick = event.getY();
-	 starObject.drawMouseClick (xMouseClick, yMouseClick); // just test
+	 //starObject.drawMouseClick (xMouseClick, yMouseClick); // just test
+	// drawMouseClick (xMouseClick, yMouseClick); // just test
+
 
 	 // implementation: send (xMouseClick, yMouseClick) coordinates to getNearest,
 	 //return the object and call starObject.drawNearest(entry->x, entry->y);
 	 //to show nearest bucks.
 	 // in drawNearest make the color green and circle 3f radius.
+
+	
+	 // transform y coordinate into Starbucks compatibile
+	 double mouseX = xMouseClick/xMult;
+	 // transform y coordinate into Starbucks compatibile
+	 double mouseY = 1-(yMouseClick/yMult);
+	  // call getNearest
+	 starObject.getNearest ( (mouseX), (mouseY) ); 
+
+	//display returned nearest object
+	 glColor3f (1.0, 1.0, 0.0);
+	 //transform returned coordinates into proper values for screen
+	 gl::drawSolidCircle( Vec2f( ((starObject.closestBucks ->x * xMult)), ( (1-(starObject.closestBucks ->y)) * yMult) ),  2.0f );
+		
+
+	
  }
 
 
