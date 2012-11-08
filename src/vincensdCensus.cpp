@@ -12,7 +12,7 @@
  */
  
 #include "vincensdCensus.h"
-using namespace std;
+
 
 	/** 
 	 * Constructs Node object which points to itself and has a data_ member
@@ -28,6 +28,7 @@ using namespace std;
 		left_ = right_ = NULL;		// create node; the assignments go in reverse order
 		data = new Entry();			
 	}
+
 
 	/** 
 	*Default vincensdCensus constructor
@@ -176,6 +177,144 @@ using namespace std;
 	} // end getNearest
 
 
+	/////////////////////////////////////////////////////////////
+
+
+	void vincensdCensus::drawStarbucks( double x, double y) {
+			// turn on alpha blending
+		//http://libcinder.org/docs/v0.8.2/namespacecinder_1_1gl.html#a2cb8982a5a007376031745ac074bed4c
+		
+		
+		gl::enableAlphaBlending();
+		//activate the alpha channel
+		gl::color(ColorA(0.0f,0.0f,0.0f,0.25f));
+		
+		// draw circle
+		//glColor3f (1.0, 0.0, 0.0);
+		//Color8u(rand()%256, rand()%256, rand()%256);
+		glColor3f (rand()%256, rand()%256, rand()%256);
+		// draw a rectangle offset from the primary rect
+		gl::drawSolidCircle( Vec2f( ((x)*800), ( (1 -y)*600) ),  1.0f );
+		
+		
+		//gl::color(inColor_);	
+		// draw list rectangle
+		//gl::drawSolidCircle( Vec2f( ((x)*800)+4, ( (1 -y)*600)+4 ),  2.0f );
+		// draw list rectangle
+		//gl::drawSolidRect(Rectf (x, y, x+10, y+10) );
+		 
+	    //gl::drawSolidCircle( Vec2f( 15.0f, 25.0f ), 50.0f );
+
+		//turn off alpha
+		gl::disableAlphaBlending();
+		
+		 // for census stuff
+	//	 gl::drawSolidCircle( Vec2f( ((census10_Object.censusVec.at(i).x)*200), ( (1- census10_Object.censusVec.at(i).y)*150) ), 2.0f );
+	}
+
+
+	////////////////////////////////////////////////////////////////
+	void vincensdCensus::drawMouseClick( int x, int y) {
+		glColor3f (1.0, 1.0, 0.0);
+		// draw a rectangle offset from the primary rect
+		gl::drawSolidCircle( Vec2f( ((x)), ( (y)) ),  5.0f );
+	}
+
+
+
+
+	////////////////////////////////////////////////////////////
+
+	void vincensdCensus::drawCensus(CensusEntry* censusEntry,  int censusYear)  {
+
+		// declare CensuEntry type
+		
+
+		
+		// turn on alpha blending
+		//http://libcinder.org/docs/v0.8.2/namespacecinder_1_1gl.html#a2cb8982a5a007376031745ac074bed4c
+		gl::enableAlphaBlending();
+		
+		//activate the alpha channel
+		gl::color(ColorA(0.0f,0.0f,0.0f,0.25f));
+		
+		
+		// loop thru census and send to getNearestCity
+		// for (int i=0 i<=
+
+		if (censusYear == 00) {
+			glColor3f (0.0, 0.0, 1.0);
+		} else {
+			glColor3f (1.0, 0.0, 0.0);
+		}
+
+		// draw a rectangle offset from the primary rect
+		//gl::drawSolidCircle( Vec2f( ((x)*800), ( (1 -y)*600) ),  1.0f );
+	
+	
+	} // edn drawCensus
+
+//////////////////////////////////////////
+
+
+	/**  */
+	// CensusEntry* drawNearestCity(double x, double y, int year) {
+	void vincensdCensus::drawNearestCity(double x, double y, int year) {
+
+	// will call search
+		
+		//Entry* e;
+		double qX = x;
+		double qY = y;
+		double difX, finX ;
+		double difY, finY;
+		
+		// set distance of first point
+		double thresholdDistance = 0.1;
+
+		
+		// loop thru points
+		for (int i = 0; i <= (bucksVec.size()-1); i++) {
+				
+			double starX = bucksVec[i].x;
+			double starY = bucksVec[i].y;
+
+			// find x
+			difX = abs(qX - starX);
+			finX = pow(difX, 2);
+			// find y
+			difY = abs(qY - starY);
+			finY = pow(difY, 2);
+
+
+		double distanceTwo = sqrt( finX + finY );
+			if  (distanceTwo <= thresholdDistance){
+					if (year == 00) {
+						glColor3f (0.0, 0.0, 1.0);
+					} else {
+						glColor3f (1.0, 0.0, 0.0);
+					}
+				// draw a rectangle offset from the primary rect
+				gl::drawSolidCircle( Vec2f( ((starX)*800), ( (1 - starY)*600) ),  2.0f );
+
+					} 
+		  } // end for
+
+
+		
+		
+	}
+	
+
+
+
+
+
+
+
+
+
+
 
 	///////////////// TREE BASED ATTEMPT ////////////////////////////////////////////
 	void vincensdCensus::buildTree(Entry* c, int n){
@@ -210,7 +349,7 @@ using namespace std;
 					
 				
 
-	} //end build
+	} //end buildTree
 
 	
 
@@ -355,6 +494,7 @@ using namespace std;
 					closestBucks = current_entry; //
 					} 
 		 
+			return NULL;
 
 	} //end search
 

@@ -70,4 +70,8 @@ public:
 	 *  answer may be approximate, but then you will lose points on the "Accuracy" quality measure
 	 */
 	virtual Entry* getNearest(double x, double y) = 0;
+
+	//virtual CensusEntry* getNearestCity(double x, double y) = 0;
+
+	
 };

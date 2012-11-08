@@ -5,6 +5,8 @@
  * Purpose  : This program will perform several duties required for HW04.
  * Sources  : 
  http://www.creativeapplications.net/tutorials/images-in-cinder-tutorials-cinder/
+ http://redpaperheart.com/blog/2012/08/handy-snippets-for-drawing-image-textures-in-cinder/
+
 
 
  * Fulfills : (a) Draw map of the US
@@ -55,9 +57,9 @@ class HW04_vincensd_ph3App : public AppBasic {
 	void draw();
 
 	void mouseDown( MouseEvent event );
-	//void keyDown( KeyEvent event );
-
+	void keyDown( KeyEvent event );
 	void prepareSettings(Settings* settings);
+	void drawMouseClick( int x, int y);
 	
   private:
 	Surface* mySurface_; //The Surface object whose pixel array we will modify
@@ -209,11 +211,13 @@ void HW04_vincensd_ph3App::setup()
 
 				 infile2.get();					// gets a single char, the comma
 				 infile2 >> latitude;
-				 e.y = (latitude - (-125))/((-63) - (-125)); //convert to the proper y coordinate
+				 e.y = (latitude);
+				 //e.y = (latitude - (-125))/((-63) - (-125)); //convert to the proper y coordinate
 
 				 infile2.get();					 // gets a single char,  the comma
 				 infile2 >> longitude;
-				 e.x = (longitude - 24)/(49-24); //convert to the proper x coordinate
+				 e.x = (longitude);
+				// e.x = (longitude - 24)/(49-24); //convert to the proper x coordinate
 
 
 				 censusVec.push_back(e);	// add objects onto back of vector
@@ -260,7 +264,7 @@ void HW04_vincensd_ph3App::setup()
 	ifstream infile3 ("..\\resources\\Census_2010.csv");			    // pg589 create an an input stream
 	
 	if (infile3.fail()){ 
-		cout << "Error opening file" << endl;						// %s\n", "Starbucks_2006.csv"); 
+		cout << "Error opening file" << endl;						   // %s\n", "Starbucks_2006.csv"); 
 	}
 
 	//Fill the vector with entry data
@@ -281,11 +285,13 @@ void HW04_vincensd_ph3App::setup()
 
 				 infile3.get();					// gets a single char, the comma
 				 infile3 >> latitude2;
-				 f.y = (latitude2 - (-125))/((-63) - (-125)); //convert to the proper y coordinate
+				 f.y = (latitude2);
+				 //f.y = (latitude2 - (-125))/((-63) - (-125)); //convert to the proper y coordinate
 				
 				 infile3.get();					 // gets a single char,  the comma
 				 infile3 >> longitude2;
-				 f.x = (longitude2 - 24)/(49-24); //convert to the proper x coordinate
+				 f.x = (longitude2);
+				 //f.x = (longitude2 - 24)/(49-24); //convert to the proper x coordinate
 			
 				 censusVec2.push_back(f);	// add objects onto back of vector
 	}
@@ -317,10 +323,21 @@ void HW04_vincensd_ph3App::setup()
 		censusVec2.clear();
 		delete [] entryArr3;	
 
-	
-}
 
+	// clear out the window with black
+	//gl::clear( Color( 1.0f, 1.0f, 1.0f ) );
 
+	gl::draw( textureMap ); 
+
+} // end setup
+
+///////////////////////////////////////////////////////////
+
+void HW04_vincensd_ph3App::drawMouseClick( int x, int y) {
+		glColor3f (1.0, 1.0, 0.0);
+		// draw a rectangle offset from the primary rect
+		gl::drawSolidCircle( Vec2f( ((x)), (y) ),  2.0f );
+	}
 
 
 void HW04_vincensd_ph3App::mouseDown( MouseEvent event )
@@ -328,13 +345,47 @@ void HW04_vincensd_ph3App::mouseDown( MouseEvent event )
 //Satisfies ... at the mouse click
 //uint8_t* dataArray = (*mySurface_).getData();
 
-// save coordinates and will update when Draw is called
- xMouseClick = event.getX();
- yMouseClick = event.getY();
- 
+	// save coordinates and will update when Draw is called
+	 xMouseClick = event.getX();
+	 yMouseClick = event.getY();
+	 starObject.drawMouseClick (xMouseClick, yMouseClick); // just test
+
+	 // implementation: send (xMouseClick, yMouseClick) coordinates to getNearest,
+	 //return the object and call starObject.drawNearest(entry->x, entry->y);
+	 //to show nearest bucks.
+	 // in drawNearest make the color green and circle 3f radius.
  }
 
 
+void  HW04_vincensd_ph3App::keyDown( KeyEvent event ) {
+	
+	//CensusEntry censusObject;
+	int year;
+
+    if( event.getChar() == 'q' ){
+		 //call census_2000
+		year = 00;
+		//censusObject = &census00_Object;
+		//census00_Object.drawCensus(&census00_Object, year);
+
+		 for(int i = 0; i <=((census00_Object.CensusSize-1) ); i++){ 
+		
+		 census00_Object.drawNearestCity(census00_Object.censusVec.at(i).x, census00_Object.censusVec.at(i).y, year);	 	 
+		}
+
+	} else if( event.getChar() == 'e' ){
+		 //call census_2010
+		year = 10;
+		for(int i = 0; i <= ((census10_Object.CensusSize -1)); i++){ 
+		
+		 census10_Object.drawNearestCity(census10_Object.censusVec.at(i).x, census10_Object.censusVec.at(i).y, year);	 	 
+		}
+	}
+
+} // end keyDown
+
+
+////////////////////////////////////////////////////////////////////////////
 
 void HW04_vincensd_ph3App::update()
 {
@@ -342,16 +393,25 @@ void HW04_vincensd_ph3App::update()
 
 void HW04_vincensd_ph3App::draw()
 {
-	// clear out the window with black
-	//gl::clear( Color( 0, 0, 0 ) ); 
+	
+	//gl::clear(Color( 100, 100, 100 ));
+	gl::enableAlphaBlending();
+	
 
 	//Draw our texture to the screen, using graphics library
-
 	//gl::draw(*mySurface_);
 
 	// DRAW ORDER: 1st: so that it's always on bottom
-	gl::draw( textureMap );  
+	//gl::draw( textureMap );  
 
+   
+
+	/** DRAW ORDER
+	mousClick so that we can put a city down, at say 3.0f and then a starbucks on top of it
+	
+		//starObject.drawMouseClick (xMouseClick, yMouseClick);
+	*/	
+	
 
 	// DRAW ORDER: 2nd: loop thru SB points to be ontop of map
 	/** draw colors/ rectangles like I did in proj 2 */
@@ -362,19 +422,13 @@ void HW04_vincensd_ph3App::draw()
 
 	 /** loop thru and draw starObject points */
 
-	 for(int i = 0; i <=5 ; i++){ //starObject.starbucksSize
-		glColor3f (1.0, 1.0, 0.0);
-
-		//http://libcinder.org/docs/dev/namespacecinder_1_1gl.html#a225b1296ceeaa8b2393339fc39debf7a
-	
-		gl::drawSolidCircle( Vec2f( ((starObject.bucksVec.at(i).x)*800), ( (1 - starObject.bucksVec.at(i).y)*600) ), 2.0f );
-		 // for census stuff
-	//	 gl::drawSolidCircle( Vec2f( ((census10_Object.censusVec.at(i).x)*200), ( (1- census10_Object.censusVec.at(i).y)*150) ), 2.0f );
+	 for(int i = 0; i <=(starObject.starbucksSize-1) ; i++){ // (starObject.starbucksSize-1)
+		
+		 starObject.drawStarbucks(starObject.bucksVec.at(i).x, starObject.bucksVec.at(i).y);	 	 
 	 }
+	
 
-	 gl::drawSolidCircle( Vec2f( 15.0f, 25.0f ), 50.0f );
-
-	 //gl::drawSolidCircle( Vec2f( 15.0f, 25.0f ), 50.0f, 7 ); 
+	// gl::drawSolidCircle( Vec2f( 15.0f, 25.0f ), 50.0f, 7 ); 
 	// gl::drawSolidRect(Rectf (.5*800, .5*600, .6*800, .6*600) );
 
 	/**
@@ -386,18 +440,21 @@ void HW04_vincensd_ph3App::draw()
 		// turn on alpha blending
 		//http://libcinder.org/docs/v0.8.2/namespacecinder_1_1gl.html#a2cb8982a5a007376031745ac074bed4c
 		gl::enableAlphaBlending();
+		
 		//activate the alpha channel
 		gl::color(ColorA(0.0f,0.0f,0.0f,0.25f));
+		
 		// draw a rectangle offset from the primary rect
 		//gl::drawSolidRect(Rectf (x1_+shadowOffset, y1_+shadowOffset, x2_+shadowOffset, y2_+shadowOffset), 6.0f);
+		
 		//turn off alpha
 		gl::disableAlphaBlending();	
+		
 		// set the color of the list rectangle
 		gl::color(inColor_);	
+		
 		// draw list rectangle
 		gl::drawSolidRect(Rectf (x1_+ shake, y1_+ shake, x2_+shake, y2_+shake) );
-
-
 
 
 	*/

@@ -20,9 +20,15 @@
 #include <functional>
 #include <conio.h>
 
+#include "cinder/app/AppBasic.h"
+#include "cinder/gl/Texture.h"
+#include "cinder/gl/gl.h"
+#include "cinder/Rand.h"
 
+using namespace ci;
+using namespace ci::app;
+using namespace std;		// standard library
 
-using namespace std;
 std::stringstream;
 
 
@@ -58,8 +64,8 @@ public:
 	
 	// Census stuff
 	//CensusEntry* entry_Census2000ArrBld;		// : holds our array from build to use in getNearest 
-	vector<CensusEntry> censusVec;		// : holds our vector from build to use in getNearest
-	int CensusSize;							  // size of array
+	vector<CensusEntry> censusVec;				// : holds our vector from build to use in getNearest
+	int CensusSize;							   // size of array
 
 	//int Census2010Size;
 	//int Census2000Size;
@@ -127,7 +133,9 @@ public:
 	Entry* getNearestArray(double x, double y);
 	//and
 	Entry* getNearestNode(double x, double y);
-	
+	//and 
+  //  CensusEntry* getNearestCity(double x, double y);
+
 	/**
 	Destructor Method
 	*/
@@ -143,13 +151,51 @@ public:
 
 
 	/**
-	* void insert
+	* Node* insert
 	* @param Entry: Entry object we are adding to the tree
 	* @param Node* r: Pointer to addy of the node 
 	* @paramL bool isXLevel
 	*/
 	Node* insert (Entry* e, Node* r, bool isXLevel);
 
+	/**
+	* void drawStarbucks
+	* @param: 
+	* @param: 
+	* @param: 
+	*/
+	void drawStarbucks( double x, double y);
+
+
+	/**
+	* void drawCensus2000
+	* @param: 
+	* @param: 
+	* @param: 
+	*/
+	void drawCensus( CensusEntry* censusEntry, int censusYear);
+
+
+	/**
+	* void drawCensus2000
+	* @param: 
+	* @param: 
+	* @param: 
+	*/
+	void drawCensus2010();
+	
+
+
+	/**
+	* void drawMouseClick
+	* @param: 
+	* @param: 
+	* @param: 
+	*/
+	void drawMouseClick( int x, int y);
+
+	
+	void drawNearestCity(double x, double y, int year);
 
 };
 
