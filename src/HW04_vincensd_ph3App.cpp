@@ -81,6 +81,11 @@ class HW04_vincensd_ph3App : public AppBasic {
 	int frame_number_;
 	boost::posix_time::ptime app_start_time_;
 
+	// declare the menu parameters
+	bool hideMenu;  //When true, removes the instructions
+	Font* font;		//Part of the cinder drawString method 
+
+
 
 	//Width and height of the screen
 	static const int AppWidth=800;
@@ -93,6 +98,8 @@ class HW04_vincensd_ph3App : public AppBasic {
 	int yMouseClick;
 		
 	double xMult, yMult;
+
+	bool isStarBucks, isCensus2000, isCensus2010;
 
 };
 
@@ -109,10 +116,23 @@ void HW04_vincensd_ph3App::setup()
 	//This is the setup that everyone needs to do
 	//mySurface_ = new Surface(TextureSize,TextureSize,false);
 	mySurface_ = new Surface( TextureSize, TextureSize, true, SurfaceChannelOrder::RGBA ); // width, height, alpha?, channel order
+	//regularSurface = ( loadImage( "../resources/map1.jpg" ) );
+	regularSurface = ( loadImage( "../resources/map1_blu.jpg" ) );
 	textureMap = loadImage( "../resources/map1_1024.jpg" );
 
 	xMult = 800.0;
 	yMult = 600.0;
+
+	
+	//	Setup the text menu 
+	font = new Font("Arial",28);
+	hideMenu = true;
+
+	// Setup who gets calls
+	isStarBucks = true;
+	isCensus2010 = false;
+	isCensus2000 = false;
+
 
 	////////////////////////// IMPORT DATA ////////////////////////////////////////////////////////
 
@@ -335,7 +355,7 @@ void HW04_vincensd_ph3App::setup()
 	// clear out the window with black
 	//gl::clear( Color( 1.0f, 1.0f, 1.0f ) );
 
-	gl::draw( textureMap ); 
+	//gl::draw( textureMap ); 
 
 } // end setup
 
@@ -390,23 +410,28 @@ void  HW04_vincensd_ph3App::keyDown( KeyEvent event ) {
 
     if( event.getChar() == 'q' ){
 		 //call census_2000
-		year = 00;
+		year = 2000;
 		//censusObject = &census00_Object;
 		//census00_Object.drawCensus(&census00_Object, year);
-
 		 for(int i = 0; i <=((census00_Object.CensusSize-1) ); i++){ 
-		
-		 census00_Object.drawNearestCity(census00_Object.censusVec.at(i).x, census00_Object.censusVec.at(i).y, year);	 	 
+		 census00_Object.drawNearestCity(starObject, census00_Object.censusVec.at(i).y, census00_Object.censusVec.at(i).x, year);	 	 
 		}
+
 
 	} else if( event.getChar() == 'e' ){
 		 //call census_2010
-		year = 10;
+		year = 2010;
 		for(int i = 0; i <= ((census10_Object.CensusSize -1)); i++){ 
-		
-		 census10_Object.drawNearestCity(census10_Object.censusVec.at(i).x, census10_Object.censusVec.at(i).y, year);	 	 
+		 census10_Object.drawNearestCity(starObject, census10_Object.censusVec.at(i).y, census10_Object.censusVec.at(i).x, year);	 	 
 		}
-	}
+	
+	} else if ((event.getChar() == '/') && hideMenu == false) {
+			hideMenu = true;
+	
+	} else if ((event.getChar() == '/') && hideMenu == true) {
+			hideMenu = false;
+		}// end main if
+	
 
 } // end keyDown
 
@@ -417,43 +442,48 @@ void HW04_vincensd_ph3App::update()
 {
 }
 
-void HW04_vincensd_ph3App::draw()
-{
-	
+void HW04_vincensd_ph3App::draw(){
+
+
+	if(!hideMenu)                         // draw menu 
+	{	
+		// libcinder.org/docs/v0.8.2/namespacecinder_1_1gl.html#a8715d619df092110ac326e7a4ab08098
+		gl::drawString("Menu Operations: q = , w =.", Vec2f(50.0f,200.0f),Color(0.0f,0.5f,0.0f), *font);		
+		gl::drawString("Press ? to toggle menu.", Vec2f(50.0f,250.0f),Color(0.0f,0.5f,0.0f),*font);	
+	   // } else	{	
+		// gl::clear(Color( 0, 0, 0 )); //Clear out text and makes screen white 
+	}
+		
+	if (isStarBucks){
 	//gl::clear(Color( 100, 100, 100 ));
-	gl::enableAlphaBlending();
+	//gl::enableAlphaBlending();
 	
 
 	//Draw our texture to the screen, using graphics library
 	//gl::draw(*mySurface_);
+	// gl::draw(regularSurface);
 
 	// DRAW ORDER: 1st: so that it's always on bottom
 	//gl::draw( textureMap );  
 
    
-
-	/** DRAW ORDER
-	mousClick so that we can put a city down, at say 3.0f and then a starbucks on top of it
-	
-		//starObject.drawMouseClick (xMouseClick, yMouseClick);
-	*/	
-	
-
 	// DRAW ORDER: 2nd: loop thru SB points to be ontop of map
 	/** draw colors/ rectangles like I did in proj 2 */
 	//randomze color, rndColor
 		//Color8u(rand()%256,rand()%256,rand()%256), 3);
 	 //gl::color (200,200,200); 
-	// glColor3f (1.0, 0.0, 0.0);
-
+	 //glColor3f (1.0, 0.0, 0.0);
+///////////////////////////////////////////////////////////
 	 /** loop thru and draw starObject points */
 
 	 for(int i = 0; i <=(starObject.starbucksSize-1) ; i++){ // (starObject.starbucksSize-1)
-		
+	//	
 		 starObject.drawStarbucks(starObject.bucksVec.at(i).x, starObject.bucksVec.at(i).y);	 	 
 	 }
 	
 
+
+/////////////////////////////////////////////////////////////////////////
 	// gl::drawSolidCircle( Vec2f( 15.0f, 25.0f ), 50.0f, 7 ); 
 	// gl::drawSolidRect(Rectf (.5*800, .5*600, .6*800, .6*600) );
 
@@ -482,10 +512,30 @@ void HW04_vincensd_ph3App::draw()
 		// draw list rectangle
 		gl::drawSolidRect(Rectf (x1_+ shake, y1_+ shake, x2_+shake, y2_+shake) );
 
-
 	*/
 	
+	} // end isStarBucks
 
-}
+
+	if (isCensus2000){
+	
+	for(int i = 0; i <=(census00_Object.CensusSize-1) ; i++){ 
+		
+		 census00_Object.drawCensus(census00_Object.censusVec.at(i).x, census00_Object.censusVec.at(i).y);	 	 
+	 }
+	
+	} // end isCensus2000
+
+	if (isCensus2010){
+	  for(int i = 0; i <=(census10_Object.CensusSize-1) ; i++){ 
+		
+		 census10_Object.drawCensus(census10_Object.censusVec.at(i).x, census10_Object.censusVec.at(i).y);	 	 
+		}
+	} // end isCensus2010
+	
+	
+	
+
+} //end Draw()
 
 CINDER_APP_BASIC( HW04_vincensd_ph3App, RendererGl )

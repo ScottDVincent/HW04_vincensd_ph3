@@ -170,14 +170,15 @@ public:
 	void drawStarbucks( double x, double y);
 
 
+
 	/**
 	* void drawCensus2000
 	* @param: 
 	* @param: 
 	* @param: 
 	*/
-	void drawCensus( CensusEntry* censusEntry, int censusYear);
-
+	//void drawCensus( CensusEntry* censusEntry, int censusYear);
+	void drawCensus( double x, double y);
 
 	/**
 	* void drawCensus2000
@@ -198,7 +199,7 @@ public:
 	void drawMouseClick( int x, int y);
 
 	
-	void drawNearestCity(double x, double y, int year);
+	void drawNearestCity(vincensdCensus starObject, double x, double y, int year);
 
 };
 
