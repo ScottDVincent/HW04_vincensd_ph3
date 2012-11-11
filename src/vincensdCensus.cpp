@@ -182,7 +182,7 @@
 
 
 	void vincensdCensus::drawStarbucks( double x, double y) {
-			// turn on alpha blending
+		// turn on alpha blending
 		//http://libcinder.org/docs/v0.8.2/namespacecinder_1_1gl.html#a2cb8982a5a007376031745ac074bed4c
 		
 		
@@ -195,6 +195,7 @@
 		//Color8u(rand()%256, rand()%256, rand()%256);
 		//glColor3f (rand()%256, rand()%256, rand()%256);
 	
+		
 		//bottom row
 		if ( (x >= 0.0 && x < 0.25) && (y >= 0.0 && y < .25) ) {
 			glColor3f (.25, 0.0, 0.0);
@@ -235,11 +236,13 @@
 		} else if ( (x >= 0.75 && x < 1.0) && (y >= 0.75 && y < .1) ) {
 			glColor3f (1.0, 1.0, 1.0);
 		}
+		
 
 		//draw circle
+		//glColor3f (1.0, 0.0, 0.0);
 		gl::drawSolidCircle( Vec2f( ((x)*800), ( (1-y)*600) ),  1.0f );
 
-
+		//glColor3f(Color(1,1,1));
 		
 		
 		//gl::color(inColor_);	
@@ -259,7 +262,7 @@
 
 
 	void vincensdCensus::drawCensus( double x, double y) {
-		glColor3f (0, 0, 1);	
+		glColor3f (0, 1, 0);	
 		//glColor3f (rand()%256, rand()%256, rand()%256);
 		// draw a rectangle offset from the primary rect
 		gl::drawSolidCircle( Vec2f( (((y)*800) +10), ( ((1-x)*600) +10) ),  1.0f );
@@ -312,10 +315,10 @@
 
 
 	/**  */
-	// CensusEntry* drawNearestCity(double x, double y, int year) {
-	void vincensdCensus::drawNearestCity(vincensdCensus starObject, double x, double y, int year) {
+	// CensusEntry* drawNearestCity(vincensdCensus starObject, double x, double y, int year) {
+	void vincensdCensus::drawNearestCity(vincensdCensus starObject, double y, double x, int year) {
 
-	// will call search
+	// y and x are reversed due to census spreadsheet
 		
 		//Entry* e;
 		double qX = x;
@@ -324,7 +327,7 @@
 		double difY, finY;
 		
 		// set threshold of census point to starbucks point
-		double thresholdDistance = 0.0000001;
+		double thresholdDistance = 0.05;
 
 		
 		// loop thru coords of Starbucks and compare to census coord and thresholdDistance
@@ -343,13 +346,13 @@
 
 		double distanceTwo = sqrt( finX + finY );
 			if  (distanceTwo <= thresholdDistance){
-					if (year == 2000) {
-						glColor3f (1.0, 1.0, 1.0);
-					} else {
-						glColor3f (1.0, 0.0, 0.0);
-					}
+					//if (year == 2000) {
+						glColor3f (0.0, 0.0, 1.0);
+					//} else {
+					//	glColor3f (1.0, 0.0, 0.0);
+					//}
 				// draw a rectangle offset from the primary rect
-				gl::drawSolidCircle( Vec2f( ((starX)*800), ( (1 - starY)*600) ),  2.0f );
+				gl::drawSolidCircle( Vec2f( ((starX)*800), ( (1 - starY)*600) ),  3.0f );
 			} //end if
 
 		  } // end for
@@ -361,8 +364,18 @@
 	
 
 
-
-
+/**
+void vincensdCensus::compareCensus(double x, double y)
+{
+	if ((abs (vec2000Found.x - 2010Object.x) < 2010Threshold ) && (abs (vec2000Found.y - 2010Object.y) < 2010Threshold )){
+		if (abs(vec2000Found.population < 2010Object.Population-5000))
+		
+		vec2010found.color = green
+		} else {
+		vec2010Found.Color = red
+		}// end if
+	} 
+*/
 
 
 

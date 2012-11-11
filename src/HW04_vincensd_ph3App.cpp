@@ -48,7 +48,7 @@
 #include <cstdlib>
 #include <string>
 
-
+//using
 using namespace ci;
 using namespace ci::app;
 using namespace std;
@@ -68,7 +68,7 @@ class HW04_vincensd_ph3App : public AppBasic {
 	
   private:
 	Surface* mySurface_; //The Surface object whose pixel array we will modify
-	Surface map_pic;
+	//Surface map_pic;
 	gl::Texture textureMap;
 	Surface8u regularSurface; // an empty 8 bit surface
     Surface32f hdrSurface; // an empty 32 bit high dynamic range surface
@@ -114,10 +114,9 @@ void HW04_vincensd_ph3App::setup()
 {
 	// LOAD IMAGE
 	//This is the setup that everyone needs to do
-	//mySurface_ = new Surface(TextureSize,TextureSize,false);
-	mySurface_ = new Surface( TextureSize, TextureSize, true, SurfaceChannelOrder::RGBA ); // width, height, alpha?, channel order
+	//mySurface_ = new Surface( TextureSize, TextureSize, true, SurfaceChannelOrder::RGBA ); // width, height, alpha?, channel order
+	mySurface_ = new Surface( TextureSize, TextureSize, true ); // width, height, alpha?, channel order
 	//regularSurface = ( loadImage( "../resources/map1.jpg" ) );
-	regularSurface = ( loadImage( "../resources/map1_blu.jpg" ) );
 	textureMap = loadImage( "../resources/map1_1024.jpg" );
 
 	xMult = 800.0;
@@ -125,13 +124,13 @@ void HW04_vincensd_ph3App::setup()
 
 	
 	//	Setup the text menu 
-	font = new Font("Arial",28);
+	font = new Font("Arial",12);
 	hideMenu = true;
 
 	// Setup who gets calls
 	isStarBucks = true;
-	isCensus2010 = false;
 	isCensus2000 = false;
+	isCensus2010 = false;
 
 
 	////////////////////////// IMPORT DATA ////////////////////////////////////////////////////////
@@ -201,12 +200,12 @@ void HW04_vincensd_ph3App::setup()
 		delete [] entryArr;	
 	
 	// call getNearest
-		starObject.getNearest( 0.213630099, 0.44826200 );  // flagstaff, az
+		//starObject.getNearest( 0.213630099, 0.44826200 );  // flagstaff, az
 	//display returned nearest object
-		cout << "Closets neighbor is: " << starObject.closestBucks -> identifier << endl;
+		//cout << "Closets neighbor is: " << starObject.closestBucks -> identifier << endl;
 
 		
-/////////////////////// Census 200 /////////////////////////////////////////////////////////////////
+/////////////////////// Census 2000 /////////////////////////////////////////////////////////////////
 
 	// IMPORT Census 2000 //
 	std::vector<CensusEntry> censusVec;
@@ -394,9 +393,16 @@ void HW04_vincensd_ph3App::mouseDown( MouseEvent event )
 	 starObject.getNearest ( (mouseX), (mouseY) ); 
 
 	//display returned nearest object
-	 glColor3f (1.0, 1.0, 0.0);
+	// gl::draw(textureMap);
+	 //glColor3f (1.0, 0.0, 0.0);
 	 //transform returned coordinates into proper values for screen
-	 gl::drawSolidCircle( Vec2f( ((starObject.closestBucks ->x * xMult)), ( (1-(starObject.closestBucks ->y)) * yMult) ),  2.0f );
+	 gl::drawSolidCircle( Vec2f( ((starObject.closestBucks -> x * xMult)), ( (1-(starObject.closestBucks -> y)) * yMult) ),  2.0f );
+
+	 gl::drawString(starObject.closestBucks -> identifier, Vec2f(20.0f,550.0f), Color(1.0f,0.0f,0.0f), *font);	
+
+	//  gl::drawString(starObject.closestBucks -> identifier, Vec2f(starObject.closestBucks ->x *800, (1-(starObject.closestBucks ->y)) * yMult),Color(1.0f,0.0f,0.0f), *font);
+	 // glColor3f (0.0, 0.0, 0.0);
+
 		
 
 	
@@ -413,8 +419,8 @@ void  HW04_vincensd_ph3App::keyDown( KeyEvent event ) {
 		year = 2000;
 		//censusObject = &census00_Object;
 		//census00_Object.drawCensus(&census00_Object, year);
-		 for(int i = 0; i <=((census00_Object.CensusSize-1) ); i++){ 
-		 census00_Object.drawNearestCity(starObject, census00_Object.censusVec.at(i).y, census00_Object.censusVec.at(i).x, year);	 	 
+		 for(int i = 0; i <=( 1000); i++){ // (census00_Object.CensusSize-1)
+		 census00_Object.drawNearestCity(starObject, census00_Object.censusVec.at(i).x, census00_Object.censusVec.at(i).y, year);	 	 
 		}
 
 
@@ -443,29 +449,31 @@ void HW04_vincensd_ph3App::update()
 }
 
 void HW04_vincensd_ph3App::draw(){
-
+	gl::draw(*mySurface_);
 
 	if(!hideMenu)                         // draw menu 
 	{	
 		// libcinder.org/docs/v0.8.2/namespacecinder_1_1gl.html#a8715d619df092110ac326e7a4ab08098
-		gl::drawString("Menu Operations: q = , w =.", Vec2f(50.0f,200.0f),Color(0.0f,0.5f,0.0f), *font);		
-		gl::drawString("Press ? to toggle menu.", Vec2f(50.0f,250.0f),Color(0.0f,0.5f,0.0f),*font);	
-	   // } else	{	
-		// gl::clear(Color( 0, 0, 0 )); //Clear out text and makes screen white 
+		gl::drawString("Menu Operations: q = , w =.", Vec2f(50.0f,200.0f),Color(1.0f,0.5f,0.0f), *font);		
+		gl::drawString("Press ? to toggle menu.", Vec2f(50.0f,250.0f),Color(1.0f,0.5f,0.0f),*font);	
+	    // } else	{	
+		// gl::clear(Color( 1, 1, 1 )); //Clear out text and makes screen  
 	}
 		
+	//gl::enableAlphaBlending();
+	//gl::draw(*mySurface_);
+	//gl::draw( textureMap ); 
+
 	if (isStarBucks){
 	//gl::clear(Color( 100, 100, 100 ));
 	//gl::enableAlphaBlending();
 	
-
 	//Draw our texture to the screen, using graphics library
 	//gl::draw(*mySurface_);
-	// gl::draw(regularSurface);
+	 //gl::draw(regularSurface);
 
 	// DRAW ORDER: 1st: so that it's always on bottom
 	//gl::draw( textureMap );  
-
    
 	// DRAW ORDER: 2nd: loop thru SB points to be ontop of map
 	/** draw colors/ rectangles like I did in proj 2 */
@@ -522,9 +530,9 @@ void HW04_vincensd_ph3App::draw(){
 	for(int i = 0; i <=(census00_Object.CensusSize-1) ; i++){ 
 		
 		 census00_Object.drawCensus(census00_Object.censusVec.at(i).x, census00_Object.censusVec.at(i).y);	 	 
-	 }
-	
+		 }
 	} // end isCensus2000
+
 
 	if (isCensus2010){
 	  for(int i = 0; i <=(census10_Object.CensusSize-1) ; i++){ 
