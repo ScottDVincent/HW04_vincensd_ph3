@@ -448,7 +448,7 @@ void  HW04_vincensd_ph3App::keyDown( KeyEvent event ) {
 		//censusObject = &census00_Object;
 		//census00_Object.drawCensus(&census00_Object, year);
 
-		 for(int i = 0; i <=( ((census00_Object.censusVec.size() -1) ) ); i++){ // (census0_Object.censusVec.size() -1)
+		 for(int i = 0; i <=( ((census00_Object.censusVec.size() -1) ) ); i++){ // (census00_Object.censusVec.size() -1)
 			// call getNearest
 			starObject.getNearest( census00_Object.censusVec.at(i).x, census00_Object.censusVec.at(i).y );
 			//add population to returned object returned nearest object
@@ -465,7 +465,7 @@ void  HW04_vincensd_ph3App::keyDown( KeyEvent event ) {
 			// call getNearest
 				starObject.getNearest( census10_Object.censusVec.at(i).x, census10_Object.censusVec.at(i).y );
 			//add population to returned object returned nearest object
-				starObject.closestBucks -> pop2010 += census00_Object.censusVec.at(i).population; 
+				starObject.closestBucks -> pop2010 += census10_Object.censusVec.at(i).population; 
 			
 			//census10_Object.drawNearestCity(starObject, census10_Object.censusVec.at(i).y, census10_Object.censusVec.at(i).x, year);	 	 
 		}
