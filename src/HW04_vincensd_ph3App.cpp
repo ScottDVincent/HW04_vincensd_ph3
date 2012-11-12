@@ -9,12 +9,18 @@
 
 
 
- * Fulfills : 
+ * Fulfills * 
  (a) Draw map of the US [20];
  (b) Highlight Nearest Starbucks to mouse click [10],
- (g) Video [10];
- (e) Draw change from 2000 to 2010; areas within .001, +pop:green, -pop:red [30],
-
+ (c) Color by region (16 regions) [30];	
+ (e) Draw change from 2000 to 2010;  +1000 population:green, -1000 populations:red 
+	  Any change within 1000+-: white[30],
+ (g) Video [10]: http://www.screenr.com/A677
+ 
+  Total: 100
+ 
+ Notes: The drawStarbucks and drawPopCensus are offset so you can see the difference in 
+  
 
  * @note This file is (c) 2012. It is licensed under the 
  * CC BY 3.0 license (http://creativecommons.org/licenses/by/3.0/),
@@ -70,8 +76,8 @@ class HW04_vincensd_ph3App : public AppBasic {
 	Surface* mySurface_; //The Surface object whose pixel array we will modify
 	//Surface map_pic;
 	gl::Texture textureMap;
-	Surface8u regularSurface; // an empty 8 bit surface
-    Surface32f hdrSurface; // an empty 32 bit high dynamic range surface
+	//Surface8u regularSurface; // an empty 8 bit surface
+   // Surface32f hdrSurface; // an empty 32 bit high dynamic range surface
 
 	vincensdCensus starObject;
 	vincensdCensus census00_Object;
@@ -84,7 +90,7 @@ class HW04_vincensd_ph3App : public AppBasic {
 	// declare the menu parameters
 	bool hideMenu;  //When true, removes the instructions
 	Font* font;		//Part of the cinder drawString method 
-
+	string identLength;
 
 
 	//Width and height of the screen
@@ -92,16 +98,23 @@ class HW04_vincensd_ph3App : public AppBasic {
 	static const int AppHeight=600;
 	static const int TextureSize=1024; //Must be the next power of 2 bigger or equal to app dimensions
 	
+	// try other sizes
+	//static const int AppWidth = 1024;
+	//static const int AppHeight = 640;
+	//static const int SurfaceSize = 1024;
 
 	// mouse - draw stuff
 	int xMouseClick;
 	int yMouseClick;
+	int mouseClicks;
 		
 	double xMult, yMult;
 
 	bool isStarBucks, isCensus2000, isCensus2010;
 
 };
+
+// Standard prepare settings
 
 void HW04_vincensd_ph3App::prepareSettings(Settings* settings){
 	(*settings).setWindowSize(AppWidth,AppHeight);
@@ -113,18 +126,22 @@ void HW04_vincensd_ph3App::prepareSettings(Settings* settings){
 void HW04_vincensd_ph3App::setup()
 {
 	// LOAD IMAGE
+	
 	//This is the setup that everyone needs to do
 	//mySurface_ = new Surface( TextureSize, TextureSize, true, SurfaceChannelOrder::RGBA ); // width, height, alpha?, channel order
 	mySurface_ = new Surface( TextureSize, TextureSize, true ); // width, height, alpha?, channel order
 	//regularSurface = ( loadImage( "../resources/map1.jpg" ) );
-	textureMap = loadImage( "../resources/map1_1024.jpg" );
+	textureMap = loadImage( "../resources/map1.jpg" );
 
 	xMult = 800.0;
 	yMult = 600.0;
+	mouseClicks = 0;
 
+	//xMult = 1024.0;
+	//yMult  = 640.0;
 	
 	//	Setup the text menu 
-	font = new Font("Arial",12);
+	font = new Font("Arial",14);
 	hideMenu = true;
 
 	// Setup who gets calls
@@ -167,6 +184,9 @@ void HW04_vincensd_ph3App::setup()
 				 infile.get();
 				 infile >> e.y;
 
+				 e.pop2000=0;
+				 e.pop2010=0;
+
 				 entryVec.push_back(e);	// split the string and add pieces onto back of vector
 	}
 		while ( !infile.eof() );
@@ -183,11 +203,11 @@ void HW04_vincensd_ph3App::setup()
 		}
 		
 	
-		/** test output in Autos window */	 
+		/** test output in Autos window 	 
 		cout << "output = " << &entryArr[0] << endl;
 		cout << "output = " << &entryArr[1] << endl;
 		cout << "output = " << &entryArr[7653] << endl;
-		cout << "output = " << &entryArr[7654] << endl;
+		cout << "output = " << &entryArr[7654] << endl;*/
 
 
 	// BUILD Starbucks DS 
@@ -263,11 +283,11 @@ void HW04_vincensd_ph3App::setup()
 		}*/
 		
 		
-		/** test output in Autos window  */
+		/** test output in Autos window  
 		cout << "output = " << &entryArr2[0] << endl;
 		cout << "output = " << &entryArr2[1] << endl;
 		cout << "output = " << &entryArr2[7653] << endl;
-		cout << "output = " << &entryArr2[7654] << endl;
+		cout << "output = " << &entryArr2[7654] << endl;*/
 
 	// BUILD Census 2010 DS
 		census00_Object.buildCensus( entryArr2, Census2000Size );
@@ -336,11 +356,11 @@ void HW04_vincensd_ph3App::setup()
 		}*/
 		
 		
-		/** test output in Autos window  */
+		/** test output in Autos window  
 		cout << "output = " << &entryArr3[0] << endl;
 		cout << "output = " << &entryArr3[1] << endl;
 		cout << "output = " << &entryArr3[7653] << endl;
-		cout << "output = " << &entryArr3[7654] << endl;
+		cout << "output = " << &entryArr3[7654] << endl; */
 
 	// BUILD Census 2010 DS
 		census10_Object.buildCensus( entryArr3, Census2010Size );
@@ -353,7 +373,6 @@ void HW04_vincensd_ph3App::setup()
 
 	// clear out the window with black
 	//gl::clear( Color( 1.0f, 1.0f, 1.0f ) );
-
 	//gl::draw( textureMap ); 
 
 } // end setup
@@ -371,6 +390,7 @@ void HW04_vincensd_ph3App::mouseDown( MouseEvent event )
 {
 //Satisfies ... at the mouse click
 //uint8_t* dataArray = (*mySurface_).getData();
+	
 
 	// save coordinates and will update when Draw is called
 	 xMouseClick = event.getX();
@@ -389,23 +409,30 @@ void HW04_vincensd_ph3App::mouseDown( MouseEvent event )
 	 double mouseX = xMouseClick/xMult;
 	 // transform y coordinate into Starbucks compatibile
 	 double mouseY = 1-(yMouseClick/yMult);
+
+	 //identLength = starObject.closestBucks -> identifier;
+	 // clear old text
+	 // if (mouseClicks != 0){
+	//	 gl::drawString(starObject.closestBucks -> identifier, Vec2f(20.0f,575.0f), Color(0.0f,0.0f,0.0f), *font);	
+	//	 }
+
 	  // call getNearest
 	 starObject.getNearest ( (mouseX), (mouseY) ); 
 
 	//display returned nearest object
 	// gl::draw(textureMap);
-	 //glColor3f (1.0, 0.0, 0.0);
+	 glColor3f (1.0, 1.0, 0.0);
 	 //transform returned coordinates into proper values for screen
 	 gl::drawSolidCircle( Vec2f( ((starObject.closestBucks -> x * xMult)), ( (1-(starObject.closestBucks -> y)) * yMult) ),  2.0f );
 
-	 gl::drawString(starObject.closestBucks -> identifier, Vec2f(20.0f,550.0f), Color(1.0f,0.0f,0.0f), *font);	
-
-	//  gl::drawString(starObject.closestBucks -> identifier, Vec2f(starObject.closestBucks ->x *800, (1-(starObject.closestBucks ->y)) * yMult),Color(1.0f,0.0f,0.0f), *font);
-	 // glColor3f (0.0, 0.0, 0.0);
-
+	// glColor3f (0.0, 0.0, 0.0);
 		
+	 gl::drawString(starObject.closestBucks -> identifier, Vec2f(20.0f,575.0f), Color(1.0f,0.0f,0.0f), *font);	
+	 mouseClicks +=1;
+	//  gl::drawString(starObject.closestBucks -> identifier, Vec2f(starObject.closestBucks ->x *800, (1-(starObject.closestBucks ->y)) * yMult),Color(1.0f,0.0f,0.0f), *font);
+	 // 
 
-	
+			
  }
 
 
@@ -413,30 +440,63 @@ void  HW04_vincensd_ph3App::keyDown( KeyEvent event ) {
 	
 	//CensusEntry censusObject;
 	int year;
+	Color8u colorIn;
+	int popDifference;
 
     if( event.getChar() == 'q' ){
-		 //call census_2000
-		year = 2000;
+		 //call census_2000: 		year = 2000;
 		//censusObject = &census00_Object;
 		//census00_Object.drawCensus(&census00_Object, year);
-		 for(int i = 0; i <=( 1000); i++){ // (census00_Object.CensusSize-1)
-		 census00_Object.drawNearestCity(starObject, census00_Object.censusVec.at(i).x, census00_Object.censusVec.at(i).y, year);	 	 
-		}
+
+		 for(int i = 0; i <=( ((censuso0_Object.censusVec.size() -1) ) ); i++){ // (censuso0_Object.censusVec.size() -1)
+			// call getNearest
+			starObject.getNearest( census00_Object.censusVec.at(i).x, census00_Object.censusVec.at(i).y );
+			//add population to returned object returned nearest object
+				starObject.closestBucks -> pop2000 += census00_Object.censusVec.at(i).population; 
+			 
+			//census00_Object.drawNearestCity(starObject, census00_Object.censusVec.at(i).x, census00_Object.censusVec.at(i).y, year);	 	 
+		} // end for
 
 
-	} else if( event.getChar() == 'e' ){
-		 //call census_2010
-		year = 2010;
-		for(int i = 0; i <= ((census10_Object.CensusSize -1)); i++){ 
-		 census10_Object.drawNearestCity(starObject, census10_Object.censusVec.at(i).y, census10_Object.censusVec.at(i).x, year);	 	 
+	//} else if( event.getChar() == 'e' ){
+		 //call census_2010: 	year = 2010;
+	
+		for(int i = 0; i <= ((census10_Object.censusVec.size() -1 ) ); i++){  // (census10_Object.censusVec.size() -1 )
+			// call getNearest
+				starObject.getNearest( census10_Object.censusVec.at(i).x, census10_Object.censusVec.at(i).y );
+			//add population to returned object returned nearest object
+				starObject.closestBucks -> pop2010 += census00_Object.censusVec.at(i).population; 
+			
+			//census10_Object.drawNearestCity(starObject, census10_Object.censusVec.at(i).y, census10_Object.censusVec.at(i).x, year);	 	 
 		}
+
+		 for(int i = 0; i <=(starObject.starbucksSize-1) ; i++){ // (starObject.starbucksSize-1)
+			
+			// if (abs((starObject.bucksVec.at(i).pop2000 - starObject.bucksVec.at(i).pop2010) < 1000)) {
+			 
+			  popDifference = (((starObject.bucksVec.at(i).pop2000 - starObject.bucksVec.at(i).pop2010)));
+			  cout << popDifference << endl;
+
+			 if (popDifference < -1000) {
+				 colorIn = Color8u(255,0,0);
+			 } else if (popDifference >= 1000) {
+				colorIn = Color8u(0,255,0);
+			 } else {
+				 colorIn = Color8u(255,255,255);
+			 } // end if
+			 starObject.drawPopCensus(starObject.bucksVec.at(i).x, starObject.bucksVec.at(i).y, colorIn );	 	 
+	} // end for
+
+
 	
 	} else if ((event.getChar() == '/') && hideMenu == false) {
 			hideMenu = true;
+			//gl::color(1,1,1);
 	
 	} else if ((event.getChar() == '/') && hideMenu == true) {
 			hideMenu = false;
-		}// end main if
+
+	}// end main if
 	
 
 } // end keyDown
@@ -449,23 +509,23 @@ void HW04_vincensd_ph3App::update()
 }
 
 void HW04_vincensd_ph3App::draw(){
-	gl::draw(*mySurface_);
+	
 
-	if(!hideMenu)                         // draw menu 
+
+	if(hideMenu)                         // draw menu 
 	{	
 		// libcinder.org/docs/v0.8.2/namespacecinder_1_1gl.html#a8715d619df092110ac326e7a4ab08098
-		gl::drawString("Menu Operations: q = , w =.", Vec2f(50.0f,200.0f),Color(1.0f,0.5f,0.0f), *font);		
-		gl::drawString("Press ? to toggle menu.", Vec2f(50.0f,250.0f),Color(1.0f,0.5f,0.0f),*font);	
+		gl::drawString("Menu Operations: q = Show Population Difference.", Vec2f(20.0f,525.0f),Color(1.0f,0.5f,0.0f), *font);		
+		//gl::drawString("Press ? to toggle menu.", Vec2f(20.0f,550.0f),Color(1.0f,0.5f,0.0f),*font);	
 	    // } else	{	
 		// gl::clear(Color( 1, 1, 1 )); //Clear out text and makes screen  
 	}
 		
-	//gl::enableAlphaBlending();
-	//gl::draw(*mySurface_);
-	//gl::draw( textureMap ); 
+ 
 
 	if (isStarBucks){
-	//gl::clear(Color( 100, 100, 100 ));
+	
+	//gl::clear(Color( 0, 0, 0 ));
 	//gl::enableAlphaBlending();
 	
 	//Draw our texture to the screen, using graphics library
@@ -478,9 +538,10 @@ void HW04_vincensd_ph3App::draw(){
 	// DRAW ORDER: 2nd: loop thru SB points to be ontop of map
 	/** draw colors/ rectangles like I did in proj 2 */
 	//randomze color, rndColor
-		//Color8u(rand()%256,rand()%256,rand()%256), 3);
+	//Color8u(rand()%256,rand()%256,rand()%256), 3);
 	 //gl::color (200,200,200); 
 	 //glColor3f (1.0, 0.0, 0.0);
+
 ///////////////////////////////////////////////////////////
 	 /** loop thru and draw starObject points */
 
@@ -490,40 +551,11 @@ void HW04_vincensd_ph3App::draw(){
 	 }
 	
 
-
+} // end isStarBucks
 /////////////////////////////////////////////////////////////////////////
-	// gl::drawSolidCircle( Vec2f( 15.0f, 25.0f ), 50.0f, 7 ); 
-	// gl::drawSolidRect(Rectf (.5*800, .5*600, .6*800, .6*600) );
-
-	/**
-		int shadowOffset = 3;
-		int shake = rand()%shakeFactor_;
-		shadowOffset += shake;
-
-
-		// turn on alpha blending
-		//http://libcinder.org/docs/v0.8.2/namespacecinder_1_1gl.html#a2cb8982a5a007376031745ac074bed4c
-		gl::enableAlphaBlending();
-		
-		//activate the alpha channel
-		gl::color(ColorA(0.0f,0.0f,0.0f,0.25f));
-		
-		// draw a rectangle offset from the primary rect
-		//gl::drawSolidRect(Rectf (x1_+shadowOffset, y1_+shadowOffset, x2_+shadowOffset, y2_+shadowOffset), 6.0f);
-		
-		//turn off alpha
-		gl::disableAlphaBlending();	
-		
-		// set the color of the list rectangle
-		gl::color(inColor_);	
-		
-		// draw list rectangle
-		gl::drawSolidRect(Rectf (x1_+ shake, y1_+ shake, x2_+shake, y2_+shake) );
-
-	*/
 	
-	} // end isStarBucks
-
+	
+	
 
 	if (isCensus2000){
 	

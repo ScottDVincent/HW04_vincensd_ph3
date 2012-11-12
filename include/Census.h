@@ -29,6 +29,8 @@ public:
 	string identifier;
 	double x;
 	double y;
+	int pop2000;
+	int pop2010;
 };
 
 

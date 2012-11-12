@@ -34,6 +34,8 @@
 	*Default vincensdCensus constructor
 	*/  
 	vincensdCensus::vincensdCensus(){
+		//xMulti=1024;
+		//yMulti=640;
 	}
 
 
@@ -169,7 +171,7 @@
 
 
 		//check result of shortestDistance
-		cout <<  "Identity is: " << closestBucks ;
+		//cout <<  "Identity is: " << closestBucks ;
 		
 		// return the Entry with the nearest location
 		return closestBucks;
@@ -182,16 +184,17 @@
 
 
 	void vincensdCensus::drawStarbucks( double x, double y) {
+		
 		// turn on alpha blending
 		//http://libcinder.org/docs/v0.8.2/namespacecinder_1_1gl.html#a2cb8982a5a007376031745ac074bed4c
-		
-		
 		//gl::enableAlphaBlending();
 		//activate the alpha channel
 		//gl::color(ColorA(0.0f,0.0f,0.0f,0.25f));
 		
-		// draw circle
+		// draw blank screen
 		//glColor3f (1.0, 0.0, 0.0);
+
+		// set random color
 		//Color8u(rand()%256, rand()%256, rand()%256);
 		//glColor3f (rand()%256, rand()%256, rand()%256);
 	
@@ -227,37 +230,25 @@
 			glColor3f (1.0, 0.75, 0.75);
 
 		//4th row	
-		} else if ( (x >= 0.0 && x < 0.25) && (y >= 0.75 && y < .1) ) {
+		} else if ( (x >= 0.0 && x < 0.25) && (y >= 0.75 && y < 1.0) ) {
 			glColor3f (1.0, 0.0, 0.0);
-		} else if ( (x >= 0.25 && x < 0.5) && (y >= 0.75 && y < .1) ) {
+		} else if ( (x >= 0.25 && x < 0.5) && (y >= 0.75 && y < 1.0) ) {
 			glColor3f (1.0, 1.0, 0.0);
-		} else if ( (x >= 0.5 && x < 0.75) && (y >= 0.75 && y < .1) ) {
+		} else if ( (x >= 0.5 && x < 0.75) && (y >= 0.75 && y < 1.0) ) {
 			glColor3f (1.0, 1.0, 0.75);
-		} else if ( (x >= 0.75 && x < 1.0) && (y >= 0.75 && y < .1) ) {
+		} else if ( (x >= 0.75 && x < 1.0) && (y >= 0.75 && y < 1.0) ) {
 			glColor3f (1.0, 1.0, 1.0);
 		}
 		
-
 		//draw circle
-		//glColor3f (1.0, 0.0, 0.0);
-		gl::drawSolidCircle( Vec2f( ((x)*800), ( (1-y)*600) ),  1.0f );
-
+		//gl::drawSolidCircle( Vec2f ( ((x*800) ), ((1-y)*600) ),  1.0f );
+		gl::drawSolidCircle( Vec2f ( ((x*800) +30 ), ((1-y)*600) +10 ),  1.0f ); // offset so I can see changes
 		//glColor3f(Color(1,1,1));
 		
 		
-		//gl::color(inColor_);	
-		// draw list rectangle
-		//gl::drawSolidCircle( Vec2f( ((x)*800)+4, ( (1 -y)*600)+4 ),  2.0f );
-		// draw list rectangle
-		//gl::drawSolidRect(Rectf (x, y, x+10, y+10) );
-		 
-	    //gl::drawSolidCircle( Vec2f( 15.0f, 25.0f ), 50.0f );
-
 		//turn off alpha
 		//gl::disableAlphaBlending();
 		
-		 // for census stuff
-	//	 gl::drawSolidCircle( Vec2f( ((census10_Object.censusVec.at(i).x)*200), ( (1- census10_Object.censusVec.at(i).y)*150) ), 2.0f );
 	}
 
 
@@ -280,36 +271,17 @@
 
 	////////////////////////////////////////////////////////////
 
-	/**
-	void vincensdCensus::drawCensus(CensusEntry* censusEntry,  int censusYear)  {
+	/***/
+	void vincensdCensus::drawPopCensus( double x, double y, Color8u inColor_)  {
 
-		// declare CensuEntry type
-		
+		// loop thru starbucks and show if the population increased, decreased or stayed withing 1000 ppl
 
+			gl::color(inColor_);	
 		
-		// turn on alpha blending
-		//http://libcinder.org/docs/v0.8.2/namespacecinder_1_1gl.html#a2cb8982a5a007376031745ac074bed4c
-		gl::enableAlphaBlending();
-		
-		//activate the alpha channel
-		gl::color(ColorA(0.0f,0.0f,0.0f,0.25f));
-		
-		
-		// loop thru census and send to getNearestCity
-		// for (int i=0 i<=
-
-		if (censusYear == 00) {
-			glColor3f (0.0, 0.0, 1.0);
-		} else {
-			glColor3f (1.0, 0.0, 0.0);
-		}
-
-		// draw a rectangle offset from the primary rect
-		//gl::drawSolidCircle( Vec2f( ((x)*800), ( (1 -y)*600) ),  1.0f );
-	
+			gl::drawSolidCircle( Vec2f( ((x)*800), ( (1-y)*600) ),  1.0f );
 	
 	} // end drawCensus
-	*/
+	
 
 //////////////////////////////////////////
 
@@ -326,9 +298,8 @@
 		double difX, finX ;
 		double difY, finY;
 		
-		// set threshold of census point to starbucks point
+		// set threshold of census point to starbucks point: only if doing getVicinity
 		double thresholdDistance = 0.05;
-
 		
 		// loop thru coords of Starbucks and compare to census coord and thresholdDistance
 		for (int i = 0; i <= (starObject.bucksVec.size()-1); i++) {
@@ -346,21 +317,18 @@
 
 		double distanceTwo = sqrt( finX + finY );
 			if  (distanceTwo <= thresholdDistance){
-					//if (year == 2000) {
-						glColor3f (0.0, 0.0, 1.0);
+				//if (year == 2000) {
+					//glColor3f (0.0, 0.0, 1.0);
 					//} else {
 					//	glColor3f (1.0, 0.0, 0.0);
-					//}
-				// draw a rectangle offset from the primary rect
+					//}	
+				
 				gl::drawSolidCircle( Vec2f( ((starX)*800), ( (1 - starY)*600) ),  3.0f );
-			} //end if
+			}  // end if
 
 		  } // end for
 
-
-		
-		
-	}
+	} // end drawNearestCity
 	
 
 

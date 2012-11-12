@@ -67,8 +67,8 @@ public:
 	vector<CensusEntry> censusVec;				// : holds our vector from build to use in getNearest
 	int CensusSize;							   // size of array
 
-	int xMult;
-	int yMult;
+	int xMulti;
+	int yMulti;
 
 	//int Census2010Size;
 	//int Census2000Size;
@@ -187,7 +187,8 @@ public:
 	* @param: 
 	*/
 	void drawCensus2010();
-	
+
+	void drawPopCensus( double x, double y, Color8u inColor);
 
 
 	/**
