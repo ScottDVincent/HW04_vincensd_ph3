@@ -242,7 +242,7 @@
 		
 		//draw circle
 		//gl::drawSolidCircle( Vec2f ( ((x*800) ), ((1-y)*600) ),  1.0f );
-		gl::drawSolidCircle( Vec2f ( ((x*800) +30 ), ((1-y)*600) +10 ),  1.0f ); // offset so I can see changes
+		gl::drawSolidCircle( Vec2f ( ((x*800) +10 ), ((1-y)*600) +10 ),  1.0f ); // offset so I can see changes
 		//glColor3f(Color(1,1,1));
 		
 		
